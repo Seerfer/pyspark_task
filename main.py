@@ -45,9 +45,10 @@ def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     return df
 
 
-schema1, schema2 = create_scheams()
-spark = setSparkSession()
-df1 = read_file("dataset_one.csv", spark)
-filter_values ={"country": "Netherlands"}
-df1 = filter_df_equal(df1, filter_values)
-df1.show()
+if __name__ == "__main__":
+    schema1, schema2 = create_scheams()
+    spark = setSparkSession()
+    df1 = read_file("dataset_one.csv", spark)
+    filter_values ={"country": "Netherlands"}
+    df1 = filter_df_equal(df1, filter_values)
+    df1.show()
