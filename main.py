@@ -40,6 +40,16 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
 
 
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
+    """Function that filter dataframe columns with given values 
+
+    Args:
+        df (DataFrame): Input dataframe that we want to filter
+        column_value (TypedDict): Python dictionary where keys are name of columns to filter and values are values used to filter given column
+                                  Values can be given on list of strings (OR condition will be applied between values) or singel string 
+
+    Returns:
+        DataFrame: Processed dataframe
+    """
     for col, values in column_value.items():
         df=df.filter(F.col(f"{col}").isin(values))
     return df
