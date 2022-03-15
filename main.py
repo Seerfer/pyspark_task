@@ -56,6 +56,15 @@ def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
 
 
 def rename_columns(df: DataFrame, column_value: TypedDict) -> DataFrame:
+    """Function that rename mulitple column in one dataframe
+
+    Args:
+        df (DataFrame): Input dataframe
+        column_value (TypedDict): Python dictionary with format {"existing column": "new name"}
+
+    Returns:
+        DataFrame: Processed dataframe
+    """
     for col, values in column_value.items():
         df=df.withColumnRenamed(f"{col}", f"{values}")
     return df
