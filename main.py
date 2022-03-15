@@ -1,8 +1,10 @@
 import logging
+
 from typing import Union, TypedDict
 
 from pyspark.sql import SparkSession, DataFrame 
 import pyspark.sql.functions as F
+
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
 def setSparkSession():  
@@ -39,6 +41,7 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
        return spark.read.option("header", "true").csv(path)
 
 
+
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     """Function that filter dataframe columns with given values 
 
@@ -62,3 +65,4 @@ if __name__ == "__main__":
     filter_values ={"country": "Netherlands"}
     df1 = filter_df_equal(df1, filter_values)
     df1.show()
+
