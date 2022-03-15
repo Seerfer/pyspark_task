@@ -25,5 +25,5 @@ def test_filter_df_equal(spark):
     df_source = spark.createDataFrame(source_data, ["first_name", "second_name"])
     df_expected = spark.createDataFrame(expected_date, ["first_name", "second_name"])
     filter_dict = {"second_name": "Nowak"}
-    assert_df_equality(filter_df_equal(df_source, filter_dict), df_expected)
+    assert_df_equality(filter_df_equal(df_source, filter_dict), df_expected, ignore_column_order=True)
 
