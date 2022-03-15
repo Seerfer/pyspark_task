@@ -29,3 +29,11 @@ def create_scheams():
     ])
 
     return schema1, schema2
+
+def read_file(path, spark, schema):
+    return spark.read.schema(schema).csv(path)
+
+schema1, schema2 = create_scheams()
+spark = setSparkSession()
+df1 = read_file("dataset_one.csv", spark, schema1)
+df1.show()
