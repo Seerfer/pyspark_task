@@ -1,6 +1,7 @@
 import logging
+from typing import Union
 
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame 
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
 def setSparkSession():  
@@ -30,10 +31,13 @@ def create_scheams():
 
     return schema1, schema2
 
-def read_file(path, spark, schema):
-    return spark.read.schema(schema).csv(path)
+def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = None) -> DataFrame:
+    if schema is not None:
+        return spark.read.schema(schema).option("header", "true").csv(path)
+    else: 
+       return spark.read.option("header", "true").csv(path)
 
 schema1, schema2 = create_scheams()
 spark = setSparkSession()
-df1 = read_file("dataset_one.csv", spark, schema1)
+df1 = read_file("dataset_one.csv", spark)
 df1.show()
