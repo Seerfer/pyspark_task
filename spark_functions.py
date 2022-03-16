@@ -104,9 +104,13 @@ def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     Returns:
         DataFrame: Processed dataframe
     """
+    
     for col, values in column_value.items():
-        logging.info(f'Adding "{col} == {values}" filter condition')
-        df = df.filter(F.col(f"{col}").isin(values))
+        if values is None:
+            pass
+        else:
+            logging.info(f'Adding "{col} == {values}" filter condition')
+            df = df.filter(F.col(f"{col}").isin(values))
     return df
 
 

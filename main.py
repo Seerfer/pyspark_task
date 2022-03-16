@@ -1,13 +1,31 @@
+import argparse
+
 from spark_functions import *
 
+def _country_name_process(name:str):
+    """ 
+    Function made to add space in country names that contains two words splited by upper case
+    Example: UnitedKingdom -> United Kingdom
+    """
+    prevletter = None
+    output = ""
+    for letter in name:
+        if letter.isupper():
+            if prevletter == "lower":
+                output += " "
+            output += letter
+        else:
+            prevletter = "lower"
+            output += letter
+    return output
 
-def main(dataset1_path: str, dataset2_path: str, *args):
+def main(dataset1_path: str, dataset2_path: str, filter_countries):
     logging.basicConfig(level=logging.INFO)
     spark = setSparkSession("spark_app")
     df1 = read_file(dataset1_path, spark)
     df2 = read_file(dataset2_path, spark)
     df1 = drop_columns(df1, ["first_name", "last_name"])
-    df1 = filter_df_equal(df1, {"country": list(args)})
+    df1 = filter_df_equal(df1, {"country": filter_countries})
     df = inner_join(df1, df2, "id")
     rename_dict = {
         "id": "client_identifier",
@@ -19,4 +37,10 @@ def main(dataset1_path: str, dataset2_path: str, *args):
 
 
 if __name__ == "__main__":
-    main("dataset_one.csv", "dataset_two.csv", "United Kingdom", "Netherlands")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--d1", "--dataset1", type=str, help="Provide path to datset 1", default="dataset_one.csv")
+    parser.add_argument("--d2", "--dataset2", type=str, help="Provide path to dataset 2", default="dataset_two.csv")
+    parser.add_argument("--countries", help="Countries to fillter", nargs="*")
+    args = vars(parser.parse_args())
+    countries = [_country_name_process(name) for name in args["countries"]]
+    main(args["d1"], args["d2"], countries)
