@@ -2,10 +2,15 @@ import argparse
 
 from spark_functions import *
 
-def _country_name_process(name:str):
-    """ 
-    Function made to add space in country names that contains two words splited by upper case
+def _country_name_process(name:str) -> str:
+    """Function made to add space in country names that contains two words splited by upper case
     Example: UnitedKingdom -> United Kingdom
+
+    Args:
+        name (str): string to proces
+
+    Returns:
+        str: proccesed string
     """
     prevletter = None
     output = ""
