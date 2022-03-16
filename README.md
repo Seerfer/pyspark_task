@@ -1,8 +1,8 @@
 # Pyspark processing datasets app
 This app is created to process two csv files. It contains following operations:
-* Droping columns with personal operations
-* Renaming columns for being more readable
-* Performing a join operation by client_identifier
+* Droping columns with personal data
+* Renaming columns for more readable names
+* Performing a join operation by client_identifier on both files
 * Filterring files by given countries
 
 At the end app is saving file with processed data at **client_data/output.csv**
