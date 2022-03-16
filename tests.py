@@ -1,7 +1,7 @@
 import pytest
 from chispa import *
 from pyspark.sql import SparkSession
-from main import filter_df_equal, rename_columns, drop_columns
+from main import filter_df_equal, rename_columns, drop_columns, inner_join
 
 @pytest.fixture(scope='session')
 def spark():
@@ -49,3 +49,18 @@ def test_drop_columns(spark):
     df_expected = spark.createDataFrame(expected_data, expectedt_col)
 
     assert_df_equality(drop_columns(df_input, col_to_drop), df_expected, ignore_column_order=True)
+
+def test_inner_join(spark):
+    data1 = [("1", "John", "Coffey"), ("2", "Paul", "Edgecombe")]
+    col1 = ["id", "first_name", "last_name"]
+    data2 = [("1", "12345678"), ("2", "87654321")]
+    col2 = ["id", "phone_number"]
+
+    expected_data = [("1", "John", "Coffey", "12345678"), ("2", "Paul", "Edgecombe", "87654321")]
+    expected_col = ["id", "first_name", "last_name", "phone_number"]
+
+    df1 = spark.createDataFrame(data1, col1)
+    df2 = spark.createDataFrame(data2, col2)
+    df_expected = spark.createDataFrame(expected_data, expected_col)
+    assert_df_equality(inner_join(df1, df2, "id"), df_expected, ignore_column_order=True)
+
