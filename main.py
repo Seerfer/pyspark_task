@@ -1,50 +1,67 @@
 import logging
 from typing import Union, TypedDict, List
 
-from pyspark.sql import SparkSession, DataFrame 
+from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
-def setSparkSession():  
-    spark = SparkSession \
-        .builder \
-        .appName("test") \
-        .config("spark.some.config.option", "some-value") \
+
+def setSparkSession():
+    spark = (
+        SparkSession.builder.appName("test")
+        .config("spark.some.config.option", "some-value")
         .getOrCreate()
+    )
     return spark
 
 
 def create_scheams():
-    schema1 = StructType([
-        StructField("id",IntegerType()), \
-        StructField("first_name", StringType()), \
-        StructField("last_name", StringType()), \
-        StructField("email", StringType()), \
-        StructField("country", StringType()), \
-    ])
+    schema1 = StructType(
+        [
+            StructField("id", IntegerType()),
+            StructField("first_name", StringType()),
+            StructField("last_name", StringType()),
+            StructField("email", StringType()),
+            StructField("country", StringType()),
+        ]
+    )
 
-    schema2 = StructType([
-        StructField("id",IntegerType()), \
-        StructField("btc_a", StringType()), \
-        StructField("cc_t", StringType()), \
-        StructField("cc_n", StringType()), \
-    ])
-
+    schema2 = StructType(
+        [
+            StructField("id", IntegerType()),
+            StructField("btc_a", StringType()),
+            StructField("cc_t", StringType()),
+            StructField("cc_n", StringType()),
+        ]
+    )
     return schema1, schema2
 
-def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = None) -> DataFrame:
-    if schema is not None:
-        return spark.read \
-        .schema(schema) \
-        .option("header", "true") \
-        .csv(path)
-    else: 
-       return spark.read \
-       .option("header", "true") \
-       .csv(path)
 
-def write_df_to_file(df: DataFrame, filename:str="output", path:str="client_data"):
-    df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
+def read_file(
+    path: str, spark: SparkSession, schema: Union[StructType, None] = None
+) -> DataFrame:
+    if schema is not None:
+        return spark.read.schema(schema).option("header", "true").csv(path)
+    else:
+        return spark.read.option("header", "true").csv(path)
+
+
+def write_df_to_file(
+    df: DataFrame, filename: str = "output", path: str = "client_data"
+):
+    """Function that write given dataframe to csv file
+
+       Important note: Commented line should work but it s not working on my local machine due to some spark problems.
+       Alternatively I used pandas dataframe to write this to csv
+
+    Args:
+        df (DataFrame): Input dataframe
+        filename (str, optional): Name of csv file. Defaults to "output".
+        path (str, optional): Destination path to save given file(path shoulkd be without "/" at the end). Defaults to "client_data".
+    """
+    # df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
+    df.toPandas().to_csv(f"{path}/{filename}.csv")
+
 
 def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
     """Function that perform inner join on two spark dataframes
@@ -59,6 +76,7 @@ def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
     """
     return df1.join(df2, key)
 
+
 def drop_columns(df: DataFrame, columns: List) -> DataFrame:
     """Droping selected columns from given dataframe
 
@@ -71,19 +89,20 @@ def drop_columns(df: DataFrame, columns: List) -> DataFrame:
     """
     return df.drop(*columns)
 
+
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
-    """Function that filter dataframe columns with given values 
+    """Function that filter dataframe columns with given values
 
     Args:
         df (DataFrame): Input dataframe that we want to filter
         column_value (TypedDict): Python dictionary where keys are name of columns to filter and values are values used to filter given column
-                                  Values can be given on list of strings (OR condition will be applied between values) or singel string 
+                                  Values can be given on list of strings (OR condition will be applied between values) or singel string
 
     Returns:
         DataFrame: Processed dataframe
     """
     for col, values in column_value.items():
-        df=df.filter(F.col(f"{col}").isin(values))
+        df = df.filter(F.col(f"{col}").isin(values))
     return df
 
 
@@ -98,8 +117,9 @@ def rename_columns(df: DataFrame, column_value: TypedDict) -> DataFrame:
         DataFrame: Processed dataframe
     """
     for col, values in column_value.items():
-        df=df.withColumnRenamed(f"{col}", f"{values}")
+        df = df.withColumnRenamed(f"{col}", f"{values}")
     return df
+
 
 def main(dataset1_path: str, dataset2_path: str, *args):
     spark = setSparkSession()
@@ -108,11 +128,14 @@ def main(dataset1_path: str, dataset2_path: str, *args):
     df1 = drop_columns(df1, ["first_name", "last_name"])
     df1 = filter_df_equal(df1, {"country": list(args)})
     df = inner_join(df1, df2, "id")
-    rename_dict = {"id":"client_identifier",
-                    "btc_a": "bitcoin_address",
-                    "cc_t":"credit_card_type"}
+    rename_dict = {
+        "id": "client_identifier",
+        "btc_a": "bitcoin_address",
+        "cc_t": "credit_card_type",
+    }
     df = rename_columns(df, rename_dict)
     write_df_to_file(df)
+
 
 if __name__ == "__main__":
     main("dataset_one.csv", "dataset_two.csv", "United Kingdom", "Netherlands")
