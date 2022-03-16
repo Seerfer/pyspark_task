@@ -34,9 +34,17 @@ def create_scheams():
 
 def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = None) -> DataFrame:
     if schema is not None:
-        return spark.read.schema(schema).option("header", "true").csv(path)
+        return spark.read \
+        .schema(schema) \
+        .option("header", "true") \
+        .csv(path)
     else: 
-       return spark.read.option("header", "true").csv(path)
+       return spark.read \
+       .option("header", "true") \
+       .csv(path)
+
+def write_df_to_file(df: DataFrame, filename:str="output", path:str="client_data"):
+    df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
 
 def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
     """Function that perform inner join on two spark dataframes
@@ -93,11 +101,18 @@ def rename_columns(df: DataFrame, column_value: TypedDict) -> DataFrame:
         df=df.withColumnRenamed(f"{col}", f"{values}")
     return df
 
+def main(dataset1_path: str, dataset2_path: str, *args):
+    spark = setSparkSession()
+    df1 = read_file(dataset1_path, spark)
+    df2 = read_file(dataset2_path, spark)
+    df1 = drop_columns(df1, ["first_name", "last_name"])
+    df1 = filter_df_equal(df1, {"country": list(args)})
+    df = inner_join(df1, df2, "id")
+    rename_dict = {"id":"client_identifier",
+                    "btc_a": "bitcoin_address",
+                    "cc_t":"credit_card_type"}
+    df = rename_columns(df, rename_dict)
+    write_df_to_file(df)
 
 if __name__ == "__main__":
-    schema1, schema2 = create_scheams()
-    spark = setSparkSession()
-    df1 = read_file("dataset_one.csv", spark)
-    filter_values ={"country": "Netherlands"}
-    df1 = filter_df_equal(df1, filter_values)
-    df1.show()
+    main("dataset_one.csv", "dataset_two.csv", "United Kingdom", "Netherlands")
