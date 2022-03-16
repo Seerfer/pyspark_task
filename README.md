@@ -6,7 +6,7 @@ This app is created to process two csv files. It contains following operations:
 * Filterring files by given countries
 
 At the end app is saving file with processed data at **client_data/output.csv**
-
+Code is compatible with [black](https://black.readthedocs.io/en/stable/) formating
 ## Installation
 ### Spark install
 Application is basing on Spark and need full Spark installation to work. Here is a simple [tutorial](https://phoenixnap.com/kb/install-spark-on-windows-10) to do this in Windows OS.
