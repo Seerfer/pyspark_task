@@ -51,7 +51,7 @@ def write_df_to_file(
 ):
     """Function that write given dataframe to csv file
 
-       Important note: Commented line should work but it s not working on my local machine due to some spark problems.
+       Important note: Commented line should work but it s not working on my local machine due to some spark/hadoop problems.
        Alternatively I used pandas dataframe to write this to csv
 
     Args:
@@ -59,8 +59,8 @@ def write_df_to_file(
         filename (str, optional): Name of csv file. Defaults to "output".
         path (str, optional): Destination path to save given file(path shoulkd be without "/" at the end). Defaults to "client_data".
     """
-    # df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
-    df.toPandas().to_csv(f"{path}/{filename}.csv")
+    #df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
+    df.toPandas().to_csv(f"{path}/{filename}.csv", index=False)
 
 
 def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
