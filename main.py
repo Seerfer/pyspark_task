@@ -30,6 +30,7 @@ def main(dataset1_path: str, dataset2_path: str, filter_countries):
     df1 = read_file(dataset1_path, spark)
     df2 = read_file(dataset2_path, spark)
     df1 = drop_columns(df1, ["first_name", "last_name"])
+    df2 = drop_columns(df2, ["cc_n"])
     df1 = filter_df_equal(df1, {"country": filter_countries})
     df = inner_join(df1, df2, "id")
     rename_dict = {
