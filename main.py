@@ -39,7 +39,7 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
        return spark.read.option("header", "true").csv(path)
 
 def drop_columns(df: DataFrame, columns: List) -> DataFrame:
-    pass
+    return df.drop(*columns)
 
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     """Function that filter dataframe columns with given values 
