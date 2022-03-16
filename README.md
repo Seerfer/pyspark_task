@@ -5,7 +5,7 @@ This app is created to process two csv files. It contains following operations:
 * Performing a join operation by client_identifier on both files
 * Filterring files by given countries
 
-At the end app is saving file with processed data at **client_data/output.csv**
+At the end app is saving file with processed data at **client_data/output.csv**.
 Code is compatible with [black](https://black.readthedocs.io/en/stable/) formating
 ## Installation
 ### Spark install
