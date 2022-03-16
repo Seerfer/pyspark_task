@@ -1,6 +1,6 @@
 import argparse
 
-from app.spark_functions import *
+from spark_functions import *
 
 
 def _country_name_process(name: str) -> str:
@@ -28,9 +28,10 @@ def _country_name_process(name: str) -> str:
 
 def main(dataset1_path: str, dataset2_path: str, filter_countries):
     logging.basicConfig(level=logging.INFO)
+    schema1, schema2 = create_scheams()
     spark = setSparkSession("spark_app")
-    df1 = read_file(dataset1_path, spark)
-    df2 = read_file(dataset2_path, spark)
+    df1 = read_file(dataset1_path, spark, schema1)
+    df2 = read_file(dataset2_path, spark, schema2)
     df1 = drop_columns(df1, ["first_name", "last_name"])
     df2 = drop_columns(df2, ["cc_n"])
     df1 = filter_df_equal(df1, {"country": filter_countries})

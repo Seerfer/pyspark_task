@@ -1,7 +1,7 @@
 import pytest
 from chispa import *
 from pyspark.sql import SparkSession
-from app.spark_functions import (
+from spark_functions import (
     filter_df_equal,
     rename_columns,
     drop_columns,
