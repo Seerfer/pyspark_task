@@ -38,6 +38,10 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
     else: 
        return spark.read.option("header", "true").csv(path)
 
+def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
+    df = df1.join(df2, key)
+    return df
+
 def drop_columns(df: DataFrame, columns: List) -> DataFrame:
     """Droping selected columns from given dataframe
 
