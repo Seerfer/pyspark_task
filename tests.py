@@ -40,12 +40,12 @@ def test_rename_columns(spark):
     assert_df_equality(rename_columns(df_source, column_rename), df_expected, ignore_column_order=True)
 
 def test_drop_columns(spark):
-    input_data = [("test1", "test2", "test3", "test4")]
+    input_data = [("test11", "test12", "test13", "test14") ,(("test21", "test22", "test23", "test24"))]
     input_col = ["col1", "col2", "col3", "col4"]
-    expected_data = [("test1", "test2")]
+    expected_data = [("test11", "test12"), ("test21", "test22")]
     expectedt_col = ["col1", "col2"]
     col_to_drop = ["col3", "col4"]
     df_input = spark.createDataFrame(input_data, input_col)
     df_expected = spark.createDataFrame(expected_data, expectedt_col)
-    
+
     assert_df_equality(drop_columns(df_input, col_to_drop), df_expected, ignore_column_order=True)
