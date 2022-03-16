@@ -1,8 +1,9 @@
 import argparse
 
-from spark_functions import *
+from app.spark_functions import *
 
-def _country_name_process(name:str) -> str:
+
+def _country_name_process(name: str) -> str:
     """Function made to add space in country names that contains two words splited by upper case
     Example: UnitedKingdom -> United Kingdom
 
@@ -24,6 +25,7 @@ def _country_name_process(name:str) -> str:
             output += letter
     return output
 
+
 def main(dataset1_path: str, dataset2_path: str, filter_countries):
     logging.basicConfig(level=logging.INFO)
     spark = setSparkSession("spark_app")
@@ -44,8 +46,20 @@ def main(dataset1_path: str, dataset2_path: str, filter_countries):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--d1", "--dataset1", type=str, help="Provide path to datset 1", default="dataset_one.csv")
-    parser.add_argument("--d2", "--dataset2", type=str, help="Provide path to dataset 2", default="dataset_two.csv")
+    parser.add_argument(
+        "--d1",
+        "--dataset1",
+        type=str,
+        help="Provide path to datset 1",
+        default="dataset_one.csv",
+    )
+    parser.add_argument(
+        "--d2",
+        "--dataset2",
+        type=str,
+        help="Provide path to dataset 2",
+        default="dataset_two.csv",
+    )
     parser.add_argument("--countries", help="Countries to fillter", nargs="*")
     args = vars(parser.parse_args())
     countries = [_country_name_process(name) for name in args["countries"]]

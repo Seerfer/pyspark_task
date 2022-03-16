@@ -1,7 +1,12 @@
 import pytest
 from chispa import *
 from pyspark.sql import SparkSession
-from spark_functions import filter_df_equal, rename_columns, drop_columns, inner_join
+from app.spark_functions import (
+    filter_df_equal,
+    rename_columns,
+    drop_columns,
+    inner_join,
+)
 
 
 @pytest.fixture(scope="session")

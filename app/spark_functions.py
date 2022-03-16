@@ -5,6 +5,7 @@ from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
+
 def setSparkSession(appname: str):
     spark = (
         SparkSession.builder.appName(appname)
@@ -42,7 +43,9 @@ def read_file(
     if schema is not None:
         return spark.read.schema(schema).option("header", "true").csv(path)
     else:
-        logging.warning(f'There is no schema provided for {path} file. Provide schema for better reading performence')
+        logging.warning(
+            f"There is no schema provided for {path} file. Provide schema for better reading performence"
+        )
         return spark.read.option("header", "true").csv(path)
 
 
@@ -59,7 +62,7 @@ def write_df_to_file(
         filename (str, optional): Name of csv file. Defaults to "output".
         path (str, optional): Destination path to save given file(path shoulkd be without "/" at the end). Defaults to "client_data".
     """
-    #df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
+    # df.write.option("header",True).format("csv").save(f"{path}/{filename}.csv")
     logging.info(f'Writing file dataframe as: "{path}/{filename}.csv"')
     df.toPandas().to_csv(f"{path}/{filename}.csv", index=False)
 
@@ -75,7 +78,7 @@ def inner_join(df1: DataFrame, df2: DataFrame, key: str) -> DataFrame:
     Returns:
         DataFrame: output dataframe
     """
-    logging.info(f'Performing join on: {key} == {key}')
+    logging.info(f"Performing join on: {key} == {key}")
     return df1.join(df2, key)
 
 
@@ -89,7 +92,7 @@ def drop_columns(df: DataFrame, columns: List) -> DataFrame:
     Returns:
         DataFrame: Processed dataframe
     """
-    logging.info(f'Dropping columns: {columns}')
+    logging.info(f"Dropping columns: {columns}")
     return df.drop(*columns)
 
 
@@ -104,7 +107,7 @@ def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     Returns:
         DataFrame: Processed dataframe
     """
-    
+
     for col, values in column_value.items():
         if values is None:
             pass
@@ -125,6 +128,6 @@ def rename_columns(df: DataFrame, column_value: TypedDict) -> DataFrame:
         DataFrame: Processed dataframe
     """
     for col, values in column_value.items():
-        logging.info(f'Column renaming {col} -> {values}')
+        logging.info(f"Column renaming {col} -> {values}")
         df = df.withColumnRenamed(f"{col}", f"{values}")
     return df
