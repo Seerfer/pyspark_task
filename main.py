@@ -1,10 +1,8 @@
 import logging
-
 from typing import Union, TypedDict
 
 from pyspark.sql import SparkSession, DataFrame 
 import pyspark.sql.functions as F
-
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
 def setSparkSession():  
@@ -41,7 +39,6 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
        return spark.read.option("header", "true").csv(path)
 
 
-
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     """Function that filter dataframe columns with given values 
 
@@ -58,6 +55,21 @@ def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     return df
 
 
+def rename_columns(df: DataFrame, column_value: TypedDict) -> DataFrame:
+    """Function that rename mulitple column in one dataframe
+
+    Args:
+        df (DataFrame): Input dataframe
+        column_value (TypedDict): Python dictionary with format {"existing column": "new name"}
+
+    Returns:
+        DataFrame: Processed dataframe
+    """
+    for col, values in column_value.items():
+        df=df.withColumnRenamed(f"{col}", f"{values}")
+    return df
+
+
 if __name__ == "__main__":
     schema1, schema2 = create_scheams()
     spark = setSparkSession()
@@ -65,4 +77,3 @@ if __name__ == "__main__":
     filter_values ={"country": "Netherlands"}
     df1 = filter_df_equal(df1, filter_values)
     df1.show()
-
