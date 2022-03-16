@@ -1,5 +1,5 @@
 import logging
-from typing import Union, TypedDict
+from typing import Union, TypedDict, List
 
 from pyspark.sql import SparkSession, DataFrame 
 import pyspark.sql.functions as F
@@ -38,6 +38,17 @@ def read_file(path: str, spark: SparkSession, schema: Union[StructType, None] = 
     else: 
        return spark.read.option("header", "true").csv(path)
 
+def drop_columns(df: DataFrame, columns: List) -> DataFrame:
+    """Droping selected columns from given dataframe
+
+    Args:
+        df (DataFrame): Input dataframe
+        columns (List): List of columns to drop
+
+    Returns:
+        DataFrame: Processed dataframe
+    """
+    return df.drop(*columns)
 
 def filter_df_equal(df: DataFrame, column_value: TypedDict) -> DataFrame:
     """Function that filter dataframe columns with given values 
